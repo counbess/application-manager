@@ -10,6 +10,8 @@ export enum ApplicationErrorCodes {
   INVALID_APPLICATION_NAME = 'Application.InvalidName',
   MISSING_APPLICATION_OWNER = 'Application.MissingOwner',
   INVALID_APPLICATION_OWNER = 'Application.InvalidOwner',
+  MISSING_APPLICATION_REPOSITORY_URL = 'Application.MissingRepositoryURL',
+  INVALID_APPLICATION_REPOSITORY_URL = 'Application.InvalidRepositoryURL',
 
   // Scope
   MISSING_SCOPE_NAME = 'Scope.MissingName',

@@ -8,6 +8,8 @@ import { Version } from '../version/Version';
 import { Scope } from '../scope/Scope';
 import { Target } from '../target/Target';
 import { AuthenticationPlan } from '../authentication-plan/AuthenticationPlan';
+import { MissingApplicationRepositoryURLError } from './errors/MissingApplicationRepositoryURLError';
+import { InvalidApplicationRepositoryURLError } from './errors/InvalidApplicationRepositoryURLError';
 
 export class Application {
   private readonly team: Team = new Team();
@@ -23,6 +25,7 @@ export class Application {
   constructor(
     readonly name: string,
     readonly owner: User,
+    readonly repositoryURL: string,
   ) {
     if (!name) {
       throw new MissingApplicationNameError();
@@ -34,6 +37,12 @@ export class Application {
       throw new MissingApplicationOwnerError();
     } else if (!(owner instanceof User)) {
       throw new InvalidApplicationOwnerError();
+    }
+
+    if (!repositoryURL) {
+      throw new MissingApplicationRepositoryURLError();
+    } else if (typeof repositoryURL !== 'string') {
+      throw new InvalidApplicationRepositoryURLError();
     }
   }
 }
