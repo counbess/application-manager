@@ -13,7 +13,6 @@ import { Version } from '../version/Version';
 import { User } from '../user/User';
 import { PublishedVersion } from '../published-version/PublishedVersion';
 
-const REGEX_ENVIRONMENT_VARIABLE = /([A-Z0-9])*_?([A-Z0-9])/g
 export class Scope {
   private readonly environmentVariables = new Map<string, string>();
 
@@ -38,12 +37,16 @@ export class Scope {
     }
   }
 
+  private isValidEnvironmentVariableKey(key: string) {
+    return /([A-Z0-9])*_?([A-Z0-9])/g.test(key)
+  }
+
   addEnvironmentVariable(key: string, value: string) {
     const alreadyExists = this.environmentVariables.has(key);
 
     if (alreadyExists) {
       throw new DuplicateEnvironmentVariableInScopeError();
-    } else if (REGEX_ENVIRONMENT_VARIABLE.test(key)) {
+    } else if (this.isValidEnvironmentVariableKey(key)) {
       this.environmentVariables.set(key, value);
     } else {
       throw new InvalidEnvironmentVariableFormatInScopeError();
