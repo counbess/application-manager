@@ -12,7 +12,11 @@ import { Target } from '../target/Target';
 import { Version } from '../version/Version';
 import { User } from '../user/User';
 import { PublishedVersion } from '../published-version/PublishedVersion';
+import { PublishType } from '~/core/common/interfaces/publish-type';
 
+function isValidEnvironmentVariableKey(key: string) {
+  return /([A-Z0-9])*_?([A-Z0-9])/g.test(key);
+}
 export class Scope {
   private readonly environmentVariables = new Map<string, string>();
 
@@ -37,16 +41,12 @@ export class Scope {
     }
   }
 
-  private isValidEnvironmentVariableKey(key: string) {
-    return /([A-Z0-9])*_?([A-Z0-9])/g.test(key)
-  }
-
   addEnvironmentVariable(key: string, value: string) {
     const alreadyExists = this.environmentVariables.has(key);
 
     if (alreadyExists) {
       throw new DuplicateEnvironmentVariableInScopeError();
-    } else if (this.isValidEnvironmentVariableKey(key)) {
+    } else if (isValidEnvironmentVariableKey(key)) {
       this.environmentVariables.set(key, value);
     } else {
       throw new InvalidEnvironmentVariableFormatInScopeError();
@@ -92,12 +92,14 @@ export class Scope {
   }
 
   publishVersion(version: Version, publisher: User) {
+    let isRollback = false;
+
     if (this.appliedVersion) {
       if (semver.eq(version.number, this.appliedVersion.number)) {
         throw new VersionCurrentlyAppliedInScopeError();
-      } else {
-        this.versionHistory.push(this.appliedVersion);
       }
+
+      isRollback = semver.lt(version.number, this.appliedVersion.number);
     }
 
     this.appliedVersion = new PublishedVersion(
@@ -105,6 +107,29 @@ export class Scope {
       version.totalCoverage,
       version.filesCoverage,
       publisher,
+      PublishType.UPGRADE,
     );
+
+    this.versionHistory.push(new PublishedVersion(
+      version.number,
+      version.totalCoverage,
+      version.filesCoverage,
+      publisher,
+      isRollback ? PublishType.ROLLBACK : PublishType.UPGRADE,
+    ));
+  }
+
+  rollbackVersion(publisher: User) {
+    const { appliedVersion } = this;
+    if (!appliedVersion) return;
+
+    const lastHistoryVersion = this.versionHistory.filter(
+      (version) => version.type === PublishType.UPGRADE
+      && semver.lt(version.number, appliedVersion.number),
+    ).reverse()[0];
+
+    if (!lastHistoryVersion) return;
+
+    this.publishVersion(lastHistoryVersion, publisher);
   }
 }

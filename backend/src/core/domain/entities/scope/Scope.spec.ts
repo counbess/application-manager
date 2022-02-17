@@ -14,6 +14,7 @@ import { CoverageItem } from '../coverage-item/CoverageItem';
 import { User } from '../user/User';
 import { VersionCurrentlyAppliedInScopeError } from './errors/VersionCurrentlyAppliedInScopeError';
 import { UserRole } from '~/core/common/interfaces/user-role';
+import { PublishType } from '~/core/common/interfaces/publish-type';
 
 const target = new Target('target', TargetTypes.DEVELOPMENT, '127.0.0.1', 8080);
 
@@ -89,8 +90,56 @@ it('should be able to access version history when some versions are published in
   const versionHistory = scope.getPublishedVersionHistory();
 
   expect(versionHistory).toBeDefined();
-  expect(versionHistory.length).toBe(1);
-  expect(versionHistory[0].number).toBe(firstVersion.number);
+  expect(versionHistory.length).toBe(2);
+  expect(versionHistory[1].number).toBe(secondVersion.number);
+});
+
+it('should be able to rollback current published version in a scoped', () => {
+  const scope = new Scope('scope-name', target);
+  const firstVersion = new Version('1.0.0', totalCoverage, new Map());
+  const secondVersion = new Version('1.0.1', totalCoverage, new Map());
+  const publisher = new User('username', UserRole.DEVELOPER);
+
+  scope.publishVersion(firstVersion, publisher);
+
+  expect(scope.getAppliedVersion()?.number).toBe(firstVersion.number);
+
+  scope.publishVersion(secondVersion, publisher);
+
+  expect(scope.getAppliedVersion()?.number).toBe(secondVersion.number);
+
+  scope.rollbackVersion(publisher);
+
+  const appliedVersion = scope.getAppliedVersion();
+  const versionHistory = scope.getPublishedVersionHistory();
+  const rollbackHistoryVersion = versionHistory[versionHistory.length - 1];
+
+  expect(rollbackHistoryVersion).toBeDefined();
+  expect(rollbackHistoryVersion.number).toBe(firstVersion.number);
+  expect(rollbackHistoryVersion.type).toBe(PublishType.ROLLBACK);
+
+  expect(appliedVersion).toBeDefined();
+  expect(appliedVersion?.number).toBe(firstVersion.number);
+});
+
+it('should be able to rollback some times in sequence current published version in a scoped', () => {
+  const scope = new Scope('scope-name', target);
+  const firstVersion = new Version('1.0.0', totalCoverage, new Map());
+  const secondVersion = new Version('1.0.1', totalCoverage, new Map());
+  const thirdVersion = new Version('1.0.2', totalCoverage, new Map());
+  const publisher = new User('username', UserRole.DEVELOPER);
+
+  scope.publishVersion(firstVersion, publisher);
+  scope.publishVersion(secondVersion, publisher);
+  scope.publishVersion(thirdVersion, publisher);
+
+  scope.rollbackVersion(publisher);
+  scope.rollbackVersion(publisher);
+
+  const appliedVersion = scope.getAppliedVersion();
+
+  expect(appliedVersion).toBeDefined();
+  expect(appliedVersion?.number).toBe(firstVersion.number);
 });
 
 it('not should be able to create a scope without name', () => {

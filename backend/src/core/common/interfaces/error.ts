@@ -45,6 +45,8 @@ export enum ApplicationErrorCodes {
   // PublishedVersion
   MISSING_PUBLISHED_VERSION_PUBLISHER = 'PublishedVersion.MissingPublisher',
   INVALID_PUBLISHED_VERSION_PUBLISHER = 'PublishedVersion.InvalidPublisher',
+  MISSING_PUBLISHED_VERSION_PUBLISH_TYPE = 'PublishedVersion.MissingPublishType',
+  INVALID_PUBLISHED_VERSION_PUBLISH_TYPE = 'PublishedVersion.InvalidPublishType',
 
   // CoverageItem
   MISSING_COVERAGE_ITEM_TOTAL = 'CoverageItem.MissingTotal',
