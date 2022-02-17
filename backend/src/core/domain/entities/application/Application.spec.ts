@@ -51,16 +51,16 @@ it('not should be able to create a application with invalid owner', () => {
 
 it('not should be able to create a application without repository url', () => {
   function execution() {
-    new Application('application-name', owner, undefined as unknown as string)
+    new Application('application-name', owner, undefined as unknown as string);
   }
 
-  expect(execution).toThrowError(MissingApplicationRepositoryURLError)
-})
+  expect(execution).toThrowError(MissingApplicationRepositoryURLError);
+});
 
 it('not should be able to create a application with invalid repository url', () => {
   function execution() {
-    new Application('application-name', owner, {} as unknown as string)
+    new Application('application-name', owner, {} as unknown as string);
   }
 
-  expect(execution).toThrowError(InvalidApplicationRepositoryURLError)
-})
+  expect(execution).toThrowError(InvalidApplicationRepositoryURLError);
+});
