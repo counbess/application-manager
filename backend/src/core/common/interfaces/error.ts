@@ -10,6 +10,11 @@ export enum ApplicationErrorCodes {
   TARGET_ID_NOT_FOUND = 'TargetsUseCase.TargetIdNotFound',
   TARGET_NAME_ALREADY_EXISTS = 'TargetsUseCase.TargetNameAlreadyExists',
 
+  MISSING_SCOPES_REPOSITORY = 'ScopesUseCase.MissingRepository',
+  INVALID_SCOPES_REPOSITORY = 'ScopesUseCase.InvalidRepository',
+  SCOPE_ID_NOT_FOUND = 'ScopesUseCase.TargetIdNotFound',
+  SCOPE_NAME_ALREADY_EXISTS = 'ScopesUseCase.TargetNameAlreadyExists',
+
   // Application
   MISSING_APPLICATION_NAME = 'Application.MissingName',
   INVALID_APPLICATION_NAME = 'Application.InvalidName',
