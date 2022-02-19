@@ -2,7 +2,7 @@ import { UnauthorizedError } from '~/core/common/errors/UnauthorizedError';
 import { Intent } from '~/core/common/interfaces/intent';
 import { UseCase } from '~/core/common/interfaces/usecase';
 import { UserRole } from '~/core/common/interfaces/user-role';
-import { TargetTypes } from '~/core/domain/entities/target/Target';
+import { Target, TargetTypes } from '~/core/domain/entities/target/Target';
 import { isTargetsRepository, TargetsRepository } from '~/core/domain/repository/Targets';
 import { InvalidTargetsRepositoryError } from './errors/InvalidTargetsRepositoryError';
 import { MissingTargetsRepositoryError } from './errors/MissingTargetsRepositoryError';
@@ -49,7 +49,9 @@ export class AddTargetUseCase implements UseCase<AddTargetDTOInput, AddTargetDTO
       throw new NameAlreadyExistsError();
     }
 
-    const output = await this.repository.add(payload);
+    const output = await this.repository.add(
+      new Target(payload.name, payload.type, payload.host, payload.port),
+    );
 
     return {
       id: output.id,
