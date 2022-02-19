@@ -5,6 +5,11 @@ export enum ApplicationErrorCodes {
   MISSING_USERS_REPOSITORY = 'UsersUseCase.MissingRepository',
   INVALID_USERS_REPOSITORY = 'UsersUseCase.InvalidRepository',
 
+  MISSING_TARGETS_REPOSITORY = 'TargetsUseCase.MissingRepository',
+  INVALID_TARGETS_REPOSITORY = 'TargetsUseCase.InvalidRepository',
+  TARGET_ID_NOT_FOUND = 'TargetsUseCase.TargetIdNotFound',
+  TARGET_NAME_ALREADY_EXISTS = 'TargetsUseCase.TargetNameAlreadyExists',
+
   // Application
   MISSING_APPLICATION_NAME = 'Application.MissingName',
   INVALID_APPLICATION_NAME = 'Application.InvalidName',
